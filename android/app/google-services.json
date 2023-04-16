@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1001063707791",
+    "project_id": "new-project-6e5b9",
+    "storage_bucket": "new-project-6e5b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001063707791:android:15a303774d682b16d36cfa",
+        "android_client_info": {
+          "package_name": "com.example.eduka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001063707791-6778opougj78crnaa20gfnfmrr30khmm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eduka",
+            "certificate_hash": "02604eb6ba42ab7eb67f8b6ee65956ce35b53d32"
+          }
+        },
+        {
+          "client_id": "1001063707791-h3flglad7b8uh7955pjlhka3fiqdmajk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlIRVR739h8KacdfYt-G6iIELHqLD9Eds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001063707791-h3flglad7b8uh7955pjlhka3fiqdmajk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
