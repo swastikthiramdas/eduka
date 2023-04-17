@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
-                return const HomeScreen();
+                return HomeScreen();
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text('Something went wrong'),

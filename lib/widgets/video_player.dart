@@ -1,5 +1,5 @@
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_video_player/cached_video_player.dart';
 
 class VideoPlayerItem extends StatefulWidget {
   final String videoUrl;
@@ -13,51 +13,35 @@ class VideoPlayerItem extends StatefulWidget {
 }
 
 class _VideoPlayerItemState extends State<VideoPlayerItem> {
-  late CachedVideoPlayerController videoPlayerController;
-  bool isPlay = false;
+  late VideoPlayerController videoPlayerController;
+  late CustomVideoPlayerController _customVideoPlayerController;
+
 
   @override
   void initState() {
     super.initState();
-    videoPlayerController = CachedVideoPlayerController.network(widget.videoUrl)
-      ..initialize().then((value) {
-        videoPlayerController.setVolume(1);
-      });
+    videoPlayerController = VideoPlayerController.network(widget.videoUrl)
+      ..initialize().then((value) => setState(() {}));
+    _customVideoPlayerController = CustomVideoPlayerController(
+      context: context,
+      videoPlayerController: videoPlayerController,
+    );
   }
 
   @override
   void dispose() {
+    _customVideoPlayerController.dispose();
     super.dispose();
-    videoPlayerController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Stack(
-        children: [
-          CachedVideoPlayer(videoPlayerController),
-          Align(
-            alignment: Alignment.center,
-            child: IconButton(
-              onPressed: () {
-                if (isPlay) {
-                  videoPlayerController.pause();
-                } else {
-                  videoPlayerController.play();
-                }
-
-                setState(() {
-                  isPlay = !isPlay;
-                });
-              },
-              icon: Icon(
-                isPlay ? Icons.pause_circle : Icons.play_circle,
-              ),
-            ),
-          ),
-        ],
+    final size = MediaQuery.of(context).size;
+    return SizedBox(
+      height: size.height,
+      width: size.width,
+      child: CustomVideoPlayer(
+          customVideoPlayerController: _customVideoPlayerController
       ),
     );
   }

@@ -1,39 +1,20 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:eduka/models/user_model.dart';
-import 'package:eduka/providers/user_provider.dart';
-import 'package:eduka/utils/firestore_methods.dart';
+
 import 'package:eduka/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
-class UploadScreen extends StatefulWidget {
-  const UploadScreen({Key? key}) : super(key: key);
+class CourseEditScreen extends StatefulWidget {
+  const CourseEditScreen({Key? key}) : super(key: key);
 
   @override
-  State<UploadScreen> createState() => _UploadScreenState();
+  State<CourseEditScreen> createState() => _CourseEditScreenState();
 }
 
-class _UploadScreenState extends State<UploadScreen> {
-  final _tittleController = TextEditingController();
-  final _certification = TextEditingController();
-  final _time = TextEditingController();
-  bool circularVisilbel = false;
-  final _discriptionController = TextEditingController();
-
-  String? name;
+class _CourseEditScreenState extends State<CourseEditScreen> {
   Uint8List? _RawVideo;
   Uint8List? _RawThubnail;
 
-  final List<String> CatList = [
-    'python',
-    'web development',
-    'java script',
-    'android development',
-  ];
-
-  String val = 'python';
 
   void selectVideo(BuildContext context) async {
     Uint8List? file = await pickDiffrentVideo(ImageSource.gallery);
@@ -43,66 +24,22 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   void selectThubnail() async {
-    // File? im = await pickVideo(context);
     Uint8List file = await pickImage(ImageSource.gallery);
     setState(() {
       _RawThubnail = file;
     });
   }
 
-  void upload(int course) async {
-    print(_tittleController.text);
-    print(_discriptionController.text);
 
-    if (circularVisilbel == false) {
-      if (_tittleController.text.trim().isNotEmpty &&
-          _discriptionController.text.trim().isNotEmpty &&
-          _time.text.trim().isNotEmpty &&
-          name!.trim().isNotEmpty &&
-          _certification.text.trim().isNotEmpty) {
-        setState(() {
-          circularVisilbel = true;
-        });
-        print('upload to start');
-        print(_tittleController.text);
-        print(_discriptionController.text);
 
-        String ref = await FirestoreMethods().UploadCource(
-          _tittleController.text,
-          _discriptionController.text,
-          _RawVideo!,
-          _RawThubnail!,
-          val,
-          name!,
-          _certification.text.trim(),
-          _time.text.trim(),
-          course as int,
-        );
 
-        setState(() {
-          circularVisilbel = false;
-        });
-
-        showSnakBar(ref, context);
-        showSnakBar('Complete', context);
-
-        if (ref == 'Success') {
-          Navigator.pop(context);
-        }
-      } else {
-        showSnakBar('Enter Details to puch Course', context);
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final UserModel _user = Provider.of<UserProvider>(context).getUser;
-    name = _user.firstname;
     return Scaffold(
       body: Stack(
         children: [
-          SingleChildScrollView(
+ /*         SingleChildScrollView(
             child: Center(
               child: SizedBox(
                 width: 350,
@@ -121,13 +58,13 @@ class _UploadScreenState extends State<UploadScreen> {
                         height: 170,
                         decoration: _RawThubnail == null
                             ? BoxDecoration(
-                                color: Colors.redAccent,
-                              )
+                          color: Colors.redAccent,
+                        )
                             : BoxDecoration(
-                                image: DecorationImage(
-                                    image: MemoryImage(_RawThubnail!),
-                                    fit: BoxFit.cover),
-                              ),
+                          image: DecorationImage(
+                              image: MemoryImage(_RawThubnail!),
+                              fit: BoxFit.cover),
+                        ),
                         child: const Center(
                           child: Icon(Icons.add_circle),
                         ),
@@ -135,21 +72,18 @@ class _UploadScreenState extends State<UploadScreen> {
                     ),
                     const SizedBox(height: 20),
                     TextField(
-                      controller: _tittleController,
                       decoration: const InputDecoration(
                         hintText: 'Tittle',
                       ),
                     ),
                     const SizedBox(height: 10),
                     TextField(
-                      controller: _discriptionController,
                       decoration: const InputDecoration(
                         hintText: 'Discription',
                       ),
                     ),
                     const SizedBox(height: 10),
                     TextField(
-                      controller: _certification,
                       decoration: const InputDecoration(
                         hintText: 'Certification',
                       ),
@@ -183,7 +117,7 @@ class _UploadScreenState extends State<UploadScreen> {
                     ),
                     const SizedBox(height: 10),
                     const SizedBox(height: 20),
-                    /*,*/
+                    *//*,*//*
                     SizedBox(
                       height: 170,
                       width: 800,
@@ -207,24 +141,24 @@ class _UploadScreenState extends State<UploadScreen> {
                             color: Colors.blueAccent,
                             minWidth: double.maxFinite,
                             padding: const EdgeInsets.symmetric(vertical: 20),
-                            onPressed: () => upload(_user.courses!),
+                            onPressed: () => upload(),
                             child: const Text('Puch'),
                           ),
                         ),
                         _RawVideo != null
                             ? SizedBox(
-                                width: 100,
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _RawVideo = null;
-                                    });
-                                  },
-                                  child: Center(
-                                    child: Text('CANCEL'),
-                                  ),
-                                ),
-                              )
+                          width: 100,
+                          child: MaterialButton(
+                            onPressed: () {
+                              setState(() {
+                                _RawVideo = null;
+                              });
+                            },
+                            child: Center(
+                              child: Text('CANCEL'),
+                            ),
+                          ),
+                        )
                             : SizedBox()
                       ],
                     ),
@@ -239,7 +173,7 @@ class _UploadScreenState extends State<UploadScreen> {
             child: const Center(
               child: CircularProgressIndicator(),
             ),
-          )
+          )*/
         ],
       ),
     );

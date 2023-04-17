@@ -42,7 +42,7 @@ class AuthMethods {
         firstname: firstname,
         photoUrl: ImageUrl,
         lastname: lastname,
-        email: email,
+        email: email, courses: 0, enrols: 0,
       );
 
       await _firestore.collection('users').doc(uid).set(user.toJason());

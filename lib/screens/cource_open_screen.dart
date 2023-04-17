@@ -1,7 +1,10 @@
 import 'package:eduka/screens/play_video_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../models/user_model.dart';
+import '../providers/user_provider.dart';
 import '../utils/firestore_methods.dart';
 import '../widgets/text1.dart';
 
@@ -18,7 +21,6 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool? isThere;
 
-
   @override
   void initState() {
     super.initState();
@@ -33,6 +35,7 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserModel _user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       body: Column(
         children: [
@@ -103,12 +106,14 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
                     Row(
                       children: [
                         Text1(
-                          icon: Icons.account_circle,
-                          text: widget.snap['certification'] != null ? widget.snap['certification'] : "",
+                          icon: Icons.emoji_events_outlined,
+                          text: widget.snap['certification'] != null
+                              ? widget.snap['certification']
+                              : "",
                         ),
                         SizedBox(width: 40),
                         Text1(
-                          icon: Icons.account_circle,
+                          icon: Icons.desktop_windows_outlined,
                           text: widget.snap['time'],
                         ),
                       ],
@@ -117,7 +122,7 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
                     Row(
                       children: [
                         Text1(
-                          icon: Icons.account_circle,
+                          icon: Icons.category,
                           text: widget.snap['category'],
                         ),
                       ],
@@ -132,12 +137,15 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
                         context,
                         MaterialPageRoute(
                           builder: ((context) => PlayVideoScreen(
-                                uil: widget.snap['videoUrl'].toString(),
-                              )),
+                              uil: widget.snap['videoUrl'].toString())),
                         ),
                       );
                     } else {
-                      FirestoreMethods().EnrollCource(_auth.currentUser!.uid, widget.snap['id']);
+                      setState(() {
+                        isThere = true;
+                      });
+                      FirestoreMethods().EnrollCource(
+                          _auth.currentUser!.uid, widget.snap['id'] , _user.enrols as int);
                     }
                   },
                   child: Text(isThere == true ? 'PLAY' : "ENROLL"),

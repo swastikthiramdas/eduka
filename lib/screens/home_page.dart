@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduka/models/user_model.dart';
 import 'package:eduka/providers/user_provider.dart';
+import 'package:eduka/screens/Login_screen.dart';
+import 'package:eduka/screens/profile_view_screen.dart';
 import 'package:eduka/screens/upload_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentPage = 0;
   String cat = "python";
-  String? firstname;
+  String firstname = "";
   bool complete = true;
+  bool isShow = true;
 
   @override
   void initState() {
@@ -27,16 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   addData() async {
-    UserProvider _userProvider = Provider.of(context , listen: false);
+    UserProvider _userProvider = Provider.of(context, listen: false);
     await _userProvider.refreshUser();
     setState(() {
       complete = false;
     });
+    return "Done";
   }
 
-
-
   Widget CourceView(final snap) {
+    final thub = snap['thubnailUrl'];
     return Container(
       margin: const EdgeInsets.all(10),
       width: 250,
@@ -45,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Container(
             height: 160,
-            decoration: snap['thubnailUrl'] == null
+            decoration: thub == null
                 ? BoxDecoration(
                     color: Colors.redAccent,
                     borderRadius: BorderRadius.circular(10),
@@ -53,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: NetworkImage(snap['thubnailUrl'].toString()),
+                      image: NetworkImage(thub),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -110,12 +113,62 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
+                      child: CourceView(snapshot.data!.docs[index].data()),
+                    )
+                  : Center(
+                      child: Text(
+                      'No Data Available',
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ));
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget getEnrollData(String uid) {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('cources')
+          .where('enrolls', arrayContains: uid)
+          .snapshots(),
+      builder: (BuildContext context,
+          AsyncSnapshot<QuerySnapshot<Map<dynamic, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.connectionState == ConnectionState.none) {
+          return Container();
+        }
+        return SizedBox(
+          height: 300,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              return snapshot.data!.docs.length != 0
+                  ? GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => CourceOpenScreen(
+                                    snap: snapshot.data!.docs[index].data(),
+                                  ))),
+                        );
+                      },
                       child: CourceView(
                         snapshot.data!.docs[index].data(),
                       ),
                     )
-                  : Center(
-                      child: Text('No Data Available'),
+                  : const Center(
+                      child: Text(
+                        'No Data Available',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
                     );
             },
           ),
@@ -132,19 +185,37 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (_currentPage == 1) {
         cat = "web development";
       } else if (_currentPage == 2) {
-        cat = "javascript";
+        cat = "java script";
       } else if (_currentPage == 3) {
         cat = "android development";
       }
     });
   }
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  NavigateFnc(BuildContext context, Widget screen) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: ((context) => screen)));
+  }
+
+  void SelectedItem(BuildContext context, Item) {
+    switch (Item) {
+      case 0:
+        NavigateFnc(context, ProfileViewScreen());
+        break;
+      case 1:
+        final auth = FirebaseAuth.instance;
+        auth.signOut().then((value) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: ((context) => Login_screen())));
+        });
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final UserModel _user = Provider.of<UserProvider>(context).getUser;
-    print(_auth.currentUser!.uid);
+    // int no = _user.courses;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -161,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(width: 50),
-            Container(
+            /*Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -193,30 +264,51 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-            ),
+            ),*/
           ],
         ),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: ((context) => UploadScreen())));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) => const UploadScreen())));
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.cloud_upload_rounded,
               color: Colors.black,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: GestureDetector(
-              onTap: () {},
-              child: CircleAvatar(
-                minRadius: 22,
-                backgroundColor: Colors.redAccent,
-              ),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.black),
+            child: PopupMenuButton<int>(
+              splashRadius: 1.0,
+              iconSize: 80,
+              icon: _user.photoUrl == null
+                  ? const CircleAvatar(
+                      backgroundColor: Colors.redAccent,
+                    )
+                  : CircleAvatar(
+                      backgroundImage: NetworkImage(_user.photoUrl!),
+                    ),
+              itemBuilder: (context) => [
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text('Profile'),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Icon(Icons.logout), Text('Logout')],
+                  ),
+                ),
+              ],
+              onSelected: (item) => SelectedItem(context, item),
             ),
-          ),
+          )
         ],
       ),
       body: Stack(
@@ -230,10 +322,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const SizedBox(height: 40),
                     Text(
-                      'Welcome!!  ${_user.firstname}',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      _user.firstname != null
+                          ? 'Welcome!!  ${_user.firstname}'
+                          : "Welcome!!",
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Visibility(
+                      visible: _user.enrols != 0 ? true : false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 40),
+                          const Text(
+                            'Continue Playing',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 20),
+                          getEnrollData(_user.uid!),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 40),
+                    const Text(
+                      'Explore New Cources',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -242,8 +359,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Python',
                             style: TextStyle(
-                              color:
-                                  _currentPage == 0 ? Colors.black87 : Colors.grey,
+                              color: _currentPage == 0
+                                  ? Colors.black87
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -252,8 +370,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Web Development',
                             style: TextStyle(
-                              color:
-                                  _currentPage == 1 ? Colors.black87 : Colors.grey,
+                              color: _currentPage == 1
+                                  ? Colors.black87
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -262,8 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'JavaScript',
                             style: TextStyle(
-                              color:
-                                  _currentPage == 2 ? Colors.black87 : Colors.grey,
+                              color: _currentPage == 2
+                                  ? Colors.black87
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -272,8 +392,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Android Development',
                             style: TextStyle(
-                              color:
-                                  _currentPage == 3 ? Colors.black87 : Colors.grey,
+                              color: _currentPage == 3
+                                  ? Colors.black87
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -298,4 +419,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

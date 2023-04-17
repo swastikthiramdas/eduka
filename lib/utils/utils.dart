@@ -14,7 +14,6 @@ showSnakBar(String content, BuildContext context) {
 }
 
 
-/*
 pickDiffrentVideo(ImageSource source) async {
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -24,8 +23,8 @@ pickDiffrentVideo(ImageSource source) async {
     return await _file.readAsBytes();
   }
 }
-*/
 
+/*
 Future<File?> pickDiffrentVideo(BuildContext context) async {
   File? video;
   try {
@@ -41,6 +40,7 @@ Future<File?> pickDiffrentVideo(BuildContext context) async {
   return video;
 }
 
+*/
 
 
 pickImage(ImageSource source) async {
