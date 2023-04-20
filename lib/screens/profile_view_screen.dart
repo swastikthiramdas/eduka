@@ -58,7 +58,7 @@ class ProfileViewScreen extends StatelessWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('cources')
-          .where('enrolls', arrayContains: uid)
+          .where('uid', isEqualTo: uid)
           .snapshots(),
       builder: (BuildContext context,
           AsyncSnapshot<QuerySnapshot<Map<dynamic, dynamic>>> snapshot) {
@@ -162,17 +162,21 @@ class ProfileViewScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: isShow,
-                  child: Column(
-                    children: [
-                      Text(
-                        'Explore New Cources',
-                        style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      getEnrollData(_user.uid!)
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Visibility(
+                    visible: _user.courses != 0 ? true : false,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'My Courses',
+                          style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        getEnrollData(_user.uid!)
+                      ],
+                    ),
                   ),
                 )
               ],

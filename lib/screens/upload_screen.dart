@@ -29,7 +29,7 @@ class _UploadScreenState extends State<UploadScreen> {
   final List<String> CatList = [
     'python',
     'web development',
-    'java script',
+    'flutter',
     'android development',
   ];
 
@@ -208,7 +208,7 @@ class _UploadScreenState extends State<UploadScreen> {
                             minWidth: double.maxFinite,
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             onPressed: () => upload(_user.courses!),
-                            child: const Text('Puch'),
+                            child: const Text('Push'),
                           ),
                         ),
                         _RawVideo != null

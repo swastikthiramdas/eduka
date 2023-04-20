@@ -1,13 +1,12 @@
 import 'dart:typed_data';
-
 import 'package:eduka/utils/firestore_methods.dart';
 import 'package:eduka/utils/storage_methods.dart';
 import 'package:eduka/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/user_provider.dart';
+
 
 class ProfileEditScreen extends StatefulWidget {
   final String firstname;

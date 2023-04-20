@@ -155,8 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                               builder: ((context) => CourceOpenScreen(
-                                    snap: snapshot.data!.docs[index].data(),
-                                  ))),
+                                  snap: snapshot.data!.docs[index].data()))),
                         );
                       },
                       child: CourceView(
@@ -185,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (_currentPage == 1) {
         cat = "web development";
       } else if (_currentPage == 2) {
-        cat = "java script";
+        cat = "flutter";
       } else if (_currentPage == 3) {
         cat = "android development";
       }
@@ -346,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 40),
                     const Text(
-                      'Explore New Cources',
+                      'Explore New Courses',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -379,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextButton(
                           onPressed: () => ChnageScreen(2),
                           child: Text(
-                            'JavaScript',
+                            'Flutter',
                             style: TextStyle(
                               color: _currentPage == 2
                                   ? Colors.black87
