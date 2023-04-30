@@ -37,6 +37,13 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
   Widget build(BuildContext context) {
     final UserModel _user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        iconTheme: IconThemeData(
+            color: Colors.black
+        ),
+      ),
       body: Column(
         children: [
           Stack(

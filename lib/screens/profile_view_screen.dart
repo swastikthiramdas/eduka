@@ -11,14 +11,24 @@ class ProfileViewScreen extends StatelessWidget {
 
   bool isShow = false;
 
-  Widget CourceView(final snap) {
+  Widget CourceView(final snap , String uid) {
     final thub = snap['thubnailUrl'];
     return Container(
       margin: const EdgeInsets.all(10),
-      width: 250,
+      width: 270,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance.collection('cources').doc(snap['id']).delete();
+                await FirebaseFirestore.instance.collection('users').doc(uid).update({'courses' : snap['courses'] - 1});
+              },
+              icon: Icon(Icons.delete_forever , color: Colors.black,),
+            ),
+          ),
           Container(
             height: 160,
             decoration: thub == null
@@ -41,7 +51,7 @@ class ProfileViewScreen extends StatelessWidget {
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: 5),
@@ -74,7 +84,7 @@ class ProfileViewScreen extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              snapshot.data!.docs.length == 0 ? isShow = false: isShow = true;
+              snapshot.data!.docs.length == 0 ? isShow = false : isShow = true;
               return snapshot.data!.docs.length != 0
                   ? GestureDetector(
                       onTap: () {
@@ -86,6 +96,7 @@ class ProfileViewScreen extends StatelessWidget {
                       },
                       child: CourceView(
                         snapshot.data!.docs[index].data(),
+                        uid
                       ),
                     )
                   : Center(
@@ -103,9 +114,7 @@ class ProfileViewScreen extends StatelessWidget {
     UserModel _user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.black
-        ),
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           'Profile',
           style: TextStyle(color: Colors.black),
@@ -123,7 +132,8 @@ class ProfileViewScreen extends StatelessWidget {
                   width: 400,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                      color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +144,13 @@ class ProfileViewScreen extends StatelessWidget {
                           child: IconButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: ((context) => ProfileEditScreen(firstname: _user.firstname!, lastname: _user.lastname!, email: _user.email!, url: _user.photoUrl!, id: _user.uid!,))));
+                                  builder: ((context) => ProfileEditScreen(
+                                        firstname: _user.firstname!,
+                                        lastname: _user.lastname!,
+                                        email: _user.email!,
+                                        url: _user.photoUrl!,
+                                        id: _user.uid!,
+                                      ))));
                             },
                             icon: Icon(Icons.edit_off),
                           ),
@@ -171,8 +187,8 @@ class ProfileViewScreen extends StatelessWidget {
                       children: [
                         Text(
                           'My Courses',
-                          style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         getEnrollData(_user.uid!)
                       ],
