@@ -113,13 +113,6 @@ class _CourceOpenScreenState extends State<CourceOpenScreen> {
                     Row(
                       children: [
                         Text1(
-                          icon: Icons.emoji_events_outlined,
-                          text: widget.snap['certification'] != null
-                              ? widget.snap['certification']
-                              : "",
-                        ),
-                        SizedBox(width: 40),
-                        Text1(
                           icon: Icons.desktop_windows_outlined,
                           text: widget.snap['time'],
                         ),

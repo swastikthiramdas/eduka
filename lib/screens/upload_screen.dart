@@ -144,7 +144,7 @@ class _UploadScreenState extends State<UploadScreen> {
                     TextField(
                       controller: _discriptionController,
                       decoration: const InputDecoration(
-                        hintText: 'Discription',
+                        hintText: 'Description',
                       ),
                     ),
                     const SizedBox(height: 10),
